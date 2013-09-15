@@ -75,8 +75,6 @@ import android.text.Selection;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.TextKeyListener;
-import android.util.ColorUtils;
-import android.util.ExtendedPropertiesUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.HapticFeedbackConstants;
@@ -359,22 +357,7 @@ public final class Launcher extends Activity
         int cellY;
     }
 
-    boolean mIsAbsent = false;
-    private String[] appDrawerColors = new String[ExtendedPropertiesUtils.PARANOID_COLORS_COUNT];
-
-    private void fadeColors(int speed, boolean stockColors) {
-        if (ColorUtils.getPerAppColorState(this)) {
-            String[] launcherColors = ExtendedPropertiesUtils.mGlobalHook.colors;
-            for (int i = 0; i < ExtendedPropertiesUtils.PARANOID_COLORS_COUNT; i++) {
-                String setting = ExtendedPropertiesUtils.PARANOID_COLORS_SETTINGS[i];
-                ColorUtils.ColorSettingInfo colorInfo = ColorUtils.getColorSettingInfo(this, setting);
-                ColorUtils.setColor(this, setting, colorInfo.systemColorString,
-                        (stockColors ? appDrawerColors[i] : (launcherColors[i].isEmpty() ?
-                        colorInfo.currentColorString : launcherColors[i])), (launcherColors[i].isEmpty()
-                        && !stockColors ? 0 : 1), speed);
-            }
-        }
-    }
+    boolean mIsAbsent = false;    
 
     private boolean doesFileExist(String filename) {
         FileInputStream fis = null;
@@ -394,17 +377,7 @@ public final class Launcher extends Activity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        mIsAbsent = false;
-
-        String[] colors = ExtendedPropertiesUtils.getProperty("com.android.launcher.appdrawer").
-                split(ExtendedPropertiesUtils.PARANOID_STRING_DELIMITER);
-        for(int i=0; i < ExtendedPropertiesUtils.PARANOID_COLORS_COUNT; i++) {
-            appDrawerColors[i] = colors.length == ExtendedPropertiesUtils.PARANOID_COLORS_COUNT ?
-                    colors[i].toUpperCase() : "NULL";
-        }
-
-        fadeColors(500, false);
+    protected void onCreate(Bundle savedInstanceState) {             
 
         if (DEBUG_STRICT_MODE) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -1510,10 +1483,8 @@ public final class Launcher extends Activity
 
             if (mIsAbsent) {
                 mIsAbsent = false;
-                if (mState == State.WORKSPACE) {
-                    fadeColors(500, false);
-                } else if (mState == State.APPS_CUSTOMIZE) {
-                    fadeColors(500, false);
+                if (mState == State.WORKSPACE) {                   
+                } else if (mState == State.APPS_CUSTOMIZE) {                    
                 }
             }
 
@@ -3113,8 +3084,7 @@ public final class Launcher extends Activity
 
     void showWorkspace(boolean animated) {
         mIsAbsent = false;
-        if (mPowerManager.isScreenOn()) {
-            fadeColors(800, false);
+        if (mPowerManager.isScreenOn()) {            
         }
         showWorkspace(animated, null);
     }
@@ -3155,8 +3125,7 @@ public final class Launcher extends Activity
     }
 
     void showAllApps(boolean animated) {
-        mIsAbsent = false;
-        fadeColors(250, false);
+        mIsAbsent = false;        
 
         if (mState != State.WORKSPACE) return;
 
